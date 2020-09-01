@@ -1,0 +1,43 @@
+sudo shutdown -r now
+docker-compose -v
+docker --version
+nodejs -v
+node -v
+python --version
+
+timedatectl list-timezones
+timedatectl set-timezone America/Sao_Paulo
+sudo timedatectl set-ntp off
+timedatectl
+sudo timedatectl set-ntp on
+
+Adicionar o repo do GEth
+sudo add-apt-repository -y ppa:ethereum/ethereum
+sudo apt-get update
+sudo apt-get install ethereum
+
+Iniciando o GEth em um ambiente de desenvolvimento, usando o diretorio ethereum-dev para armazenamento
+geth --dev --datadir ~/ethereum-dev
+
+Recomecando de uma sessão já configurada a partir de um novo terminal
+geth attach /ethereum-dev/geth.ipc
+
+Nova conta
+eth.accounts
+personal.newAccount("senhadanovaconta")
+
+eth.getBalance(eth.accounts[0])
+eth.getBalance("Id da conta")
+
+Enviando valores da conta no array  para a conta no array 1
+
+eth.sendTransaction({from: eth.accounts[0],to: eth.accounts[1],value: '1'})
+1.15792089237316195423570985008687907853269984665640564039457584007913129639927e+77
+1.15792089237316195423570985008687907853269984665640564039457584007913129639926e+77
+
+eth.getTransaction("0xcbab71e5ae22fc378fbbe654925d6b367d66884e3c8d2331c1a496753db1014c")
+
+
+eth.sendTransaction({from: eth.accounts[1],to: eth.accounts[0],value: '1'})
+
+Web3.personal.unlockAccount ((eth.accounts[1]), "senhadanovaconta", 600)

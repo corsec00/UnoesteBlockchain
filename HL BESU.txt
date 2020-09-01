@@ -1,0 +1,132 @@
+sudo apt-get install default-jdk
+
+Download do BESU
+https://bintray.com/hyperledger-org/besu-repo/download_file?file_path=besu-1.5.0.tar.gz
+
+Criar as estruturas dos nodes
+
+Priv
+├── Node1
+│   ├── data
+├── Node2
+│   ├── data
+└── Node3
+    ├── data
+
+Enderecos do Node1
+/home/lab/app/besu-1.5.0/bin/besu --data-path=data public-key export-address --to=data/nodeAddress1
+
+Genesis File: 
+===========================/home/lab/app/Priv/cliqueGenesis.json======================================
+{
+  "config":{
+    "chainId":1981,
+    "constantinoplefixblock": 0,
+    "clique":{
+      "blockperiodseconds":15,
+      "epochlength":30000
+    }
+  },
+  "coinbase":"0x0000000000000000000000000000000000000000",
+  "difficulty":"0x1",
+
+"extraData":"0x0000000000000000000000000000000000000000000000000000000000000000b9b81ee349c3807e46bc71aa2632203c5b4620340000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "gasLimit":"0xa00000",
+  "mixHash":"0x0000000000000000000000000000000000000000000000000000000000000000",
+  "nonce":"0x0",
+  "timestamp":"0x5c51a607",
+  "alloc": {
+      "fe3b557e8fb62b89f4916b721be55ceb828dbd73": {
+        "privateKey": "8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63",
+        "comment": "private key and this comment are ignored.  In a real chain, the private key should NOT be stored",
+        "balance": "0xad78ebc5ac6200000"
+      },
+      "627306090abaB3A6e1400e9345bC60c78a8BEf57": {
+        "privateKey": "c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3",
+        "comment": "private key and this comment are ignored.  In a real chain, the private key should NOT be stored",
+        "balance": "90000000000000000000000"
+      },
+      "f17f52151EbEF6C7334FAD080c5704D77216b732": {
+        "privateKey": "ae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f",
+        "comment": "private key and this comment are ignored.  In a real chain, the private key should NOT be stored",
+        "balance": "90000000000000000000000"
+      }
+   },
+  "number":"0x0",
+  "gasUsed":"0x0",
+  "parentHash":"0x0000000000000000000000000000000000000000000000000000000000000000"
+}
+=================================================================
+
+Arquivo permissions_config.toml (em todos os NodeX/Data)
+==============================permissions_config.toml===================================
+accounts-allowlist=["0xfe3b557e8fb62b89f4916b721be55ceb828dbd73", "0x627306090abaB3A6e1400e9345bC60c78a8BEf57"]
+nodes-allowlist=[]
+=================================================================
+
+Node1
+/home/lab/app/besu-1.5.0/bin/besu --data-path=data --genesis-file=../cliqueGenesis.json --permissions-nodes-config-file-enabled --permissions-accounts-config-file-enabled --rpc-http-enabled --rpc-http-api=ADMIN,ETH,NET,PERM,CLIQUE --host-allowlist="*" --rpc-http-cors-origins="*"
+
+Node2
+/home/lab/app/besu-1.5.0/bin/besu --data-path=data --genesis-file=../cliqueGenesis.json --permissions-nodes-config-file-enabled --permissions-accounts-config-file-enabled --rpc-http-enabled --rpc-http-api=ADMIN,ETH,NET,PERM,CLIQUE --host-allowlist="*" --rpc-http-cors-origins="*" --p2p-port=30304 --rpc-http-port=8546
+
+Node3
+/home/lab/app/besu-1.5.0/bin/besu --data-path=data --genesis-file=../cliqueGenesis.json --permissions-nodes-config-file-enabled --permissions-accounts-config-file-enabled --rpc-http-enabled --rpc-http-api=ADMIN,ETH,NET,PERM,CLIQUE --host-allowlist="*" --rpc-http-cors-origins="*" --p2p-port=30305 --rpc-http-port=8547
+
+Terminal 4
+curl -X POST --data '{"jsonrpc":"2.0","method":"perm_addNodesToAllowlist","params":[["enode://683fd9d75593434d3add24b86012a46299fd4537caef5efdc073719e3a7b4cdbbad25fd5b5e318f1f81d17d5bfdcbe5cb4255ac066b92273917bef5121784b32@127.0.0.1:30303","enode://f944059c20154af1e8d1a176bb3c174cae3fc9604a71ccaede91aace7404fd284a993ba1c7271b7e82cf072c0d0435a161e445d5af36b1c51603855a303bd194@127.0.0.1:30304","enode://138a3d0b610bec231e0fa61a561fff147d66e261b516fbf70a14828586395da1a0dcae84b0ae28b768731fd16ead4917116ddab4b97caef5c92ec3426a026775@127.0.0.1:30305"]],"id":1}' http://127.0.0.1:8545
+
+curl -X POST --data '{"jsonrpc":"2.0","method":"perm_addNodesToAllowlist","params":[["enode://683fd9d75593434d3add24b86012a46299fd4537caef5efdc073719e3a7b4cdbbad25fd5b5e318f1f81d17d5bfdcbe5cb4255ac066b92273917bef5121784b32@127.0.0.1:30303","enode://f944059c20154af1e8d1a176bb3c174cae3fc9604a71ccaede91aace7404fd284a993ba1c7271b7e82cf072c0d0435a161e445d5af36b1c51603855a303bd194@127.0.0.1:30304","enode://138a3d0b610bec231e0fa61a561fff147d66e261b516fbf70a14828586395da1a0dcae84b0ae28b768731fd16ead4917116ddab4b97caef5c92ec3426a026775@127.0.0.1:30305"]],"id":1}' http://127.0.0.1:8546
+
+curl -X POST --data '{"jsonrpc":"2.0","method":"perm_addNodesToAllowlist","params":[["enode://683fd9d75593434d3add24b86012a46299fd4537caef5efdc073719e3a7b4cdbbad25fd5b5e318f1f81d17d5bfdcbe5cb4255ac066b92273917bef5121784b32@127.0.0.1:30303","enode://f944059c20154af1e8d1a176bb3c174cae3fc9604a71ccaede91aace7404fd284a993ba1c7271b7e82cf072c0d0435a161e445d5af36b1c51603855a303bd194@127.0.0.1:30304","enode://138a3d0b610bec231e0fa61a561fff147d66e261b516fbf70a14828586395da1a0dcae84b0ae28b768731fd16ead4917116ddab4b97caef5c92ec3426a026775@127.0.0.1:30305"]],"id":1}' http://127.0.0.1:8547
+
+Node2 add to Node1
+curl -X POST --data '{"jsonrpc":"2.0","method":"admin_addPeer","params":["enode://683fd9d75593434d3add24b86012a46299fd4537caef5efdc073719e3a7b4cdbbad25fd5b5e318f1f81d17d5bfdcbe5cb4255ac066b92273917bef5121784b32@127.0.0.1:30303"],"id":1}' http://127.0.0.1:8546
+
+
+Node3 add to Node1
+curl -X POST --data '{"jsonrpc":"2.0","method":"admin_addPeer","params":["enode://683fd9d75593434d3add24b86012a46299fd4537caef5efdc073719e3a7b4cdbbad25fd5b5e318f1f81d17d5bfdcbe5cb4255ac066b92273917bef5121784b32@127.0.0.1:30303"],"id":1}' http://127.0.0.1:8547
+
+Node3 add to Node2
+curl -X POST --data '{"jsonrpc":"2.0","method":"admin_addPeer","params":["enode://f944059c20154af1e8d1a176bb3c174cae3fc9604a71ccaede91aace7404fd284a993ba1c7271b7e82cf072c0d0435a161e445d5af36b1c51603855a303bd194@127.0.0.1:30304"],"id":1}' http://127.0.0.1:8547
+
+Contabilizando os nodes ligados no Node1
+curl -X POST --data '{"jsonrpc":"2.0","method":"net_peerCount","params":[],"id":1}' localhost:8545
+
+
+Configurar o Metamask com 3 contas:
+
+
+Account 1 (Miner Coinbase Account)
+Address: 0xfe3b557e8fb62b89f4916b721be55ceb828dbd73
+Private key : 0x8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63
+Initial balance : 0xad78ebc5ac6200000 (200000000000000000000 in decimal)
+
+Account 2
+Address: 0x627306090abaB3A6e1400e9345bC60c78a8BEf57
+Private key : 0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3
+Initial balance : 0x90000000000000000000000 (2785365088392105618523029504 in decimal)
+
+Account 3
+Address: 0xf17f52151EbEF6C7334FAD080c5704D77216b732
+Private key : 0xae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f
+Initial balance : 0x90000000000000000000000 (2785365088392105618523029504 in decimal)
+
+Truffle com PetShop
+https://besu.hyperledger.org/en/stable/Tutorials/Examples/Private-Network-Example/#smart-contract-and-dapp-usage-with-the-blockchain-network
+
+Nodes Permissionados
+https://besu.hyperledger.org/en/stable/Tutorials/Permissioning/Create-Permissioned-Network/
+
+
+
+
+
+
+
+
+
+
+
+
+

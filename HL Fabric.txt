@@ -1,0 +1,37 @@
+lab: Aula@2020
+=========Hyperledger Fabric
+sudo dpkg-reconfigure locales
+sudo apt-get update
+sudo apt-get upgrade
+
+sudo apt-get install curl git nodejs npm python net-tools
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+sudo apt-get update
+apt-cache policy docker-ce
+sudo apt-get install -y docker-ce docker-compose
+sudo apt-get upgrade
+
+sudo usermod -aG docker ${USER}
+su - ${USER}
+id -nG
+sudo systemctl start docker
+sudo systemctl enable docker
+
+sudo curl -sSL http://bit.ly/2ysbOFE | bash -s 1.4.3
+sudo chmod 777 -R fabric-samples
+
+/usr/lib/go-1.10
+
+lab@ubuntu:~/app/go$ 
+GOARCH="amd64"
+GOBIN=""
+GOCACHE="/home/lab/.cache/go-build"
+GOPATH="/home/lab/go"
+GORACE=""
+GOROOT="/usr/lib/go-1.10"
+GOTMPDIR=""
+GOTOOLDIR="/usr/lib/go-1.10/pkg/tool/linux_amd64"
+
